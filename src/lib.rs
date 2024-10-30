@@ -68,6 +68,20 @@ mod tests {
     //
     use super::*;
 
+    fn is_partition_correct(set: &Set, input_len: usize, partition: &Vec<u32>) -> bool {
+        let inputs = partition
+            .iter()
+            .filter(|o| **o <= input_len as u32)
+            .collect::<Vec<_>>();
+
+        let input_sum = inputs.iter().map(|o| set[**o as usize]).sum::<u64>();
+        let output_sum = partition
+            .iter()
+            .filter(|o| **o > input_len as u32)
+            .map(|o| set[*o as usize])
+            .sum::<u64>();
+        input_sum == output_sum
+    }
     #[test]
     fn it_works() {
         let set: Set = vec![100, 200, 300];
@@ -77,17 +91,26 @@ mod tests {
         println!("{:?}", partitions);
 
         assert_eq!(partitions.len(), 1);
+        for partition in partitions.iter() {
+            assert!(is_partition_correct(&set, input_len, partition));
+        }
 
         let set: Set = vec![300, 200, 200, 300];
         let input_len = 1;
         let partitions = get_input_output_partitions(&set, input_len);
         println!("{:?}", partitions);
         assert_eq!(partitions.len(), 3);
+        for partition in partitions.iter() {
+            assert!(is_partition_correct(&set, input_len, partition));
+        }
 
         let set: Set = vec![100, 100, 100, 100, 300, 100];
         let input_len = 3;
         let partitions = get_input_output_partitions(&set, input_len);
         println!("{:?}", partitions);
-        assert_eq!(partitions.len(), 10);
+        
+        for partition in partitions.iter() {
+            assert!(is_partition_correct(&set, input_len, partition));
+        }
     }
 }
